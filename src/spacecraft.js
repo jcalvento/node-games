@@ -1,5 +1,6 @@
 import Unit from './classes/unit';
 import Interface from './classes/interface';
+import Polyglot from "node-polyglot";
 
 const FRAME = 20;
 let ENEMY_SPAWN_RATE = 1000;
@@ -20,49 +21,55 @@ explosion.dead = true;
 let missles = [];
 let enemies = [];
 let score = 0;
-setInterval(() => {
-  ui.clear();
 
-  player.draw();
+export default function(language) {
+  const locale = require(`${__dirname}/locales/${language || 'en'}.json`);
 
-  missles.forEach((missle, i) => {
-    missle.move(1, 0);
-    missle.draw();
+  const i18n = new Polyglot({phrases: locale});
 
-    let enemy = missle.collides(enemies)
-    if (enemy) {
-      enemy.killed = 1;
-      enemy.color = 'red';
-      enemy.shape = '*';
-      missle.dead = true;
+  setInterval((i18n) => {
+    ui.clear();
 
-      ENEMY_SPAWN_RATE -= 5;
+    player.draw();
 
-      score++;
-    }
+    missles.forEach((missle, i) => {
+      missle.move(1, 0);
+      missle.draw();
 
-    if (missle.dead) {
-      missles.splice(i, 1);
-    }
-  });
+      let enemy = missle.collides(enemies);
+      if (enemy) {
+        enemy.killed = 1;
+        enemy.color = 'red';
+        enemy.shape = '*';
+        missle.dead = true;
 
-  enemies.forEach((enemy, i) => {
-    // move with speed
-    enemy.move();
-    enemy.draw();
+        ENEMY_SPAWN_RATE -= 5;
 
-    if (enemy.dead) {
-      enemies.splice(i, 1);
-    }
+        score++;
+      }
 
-    if (enemy.killed == 3) enemy.dead = true;
-    if (enemy.killed < 3) enemy.killed++;
-  })
+      if (missle.dead) {
+        missles.splice(i, 1);
+      }
+    });
 
-  ui.cursor.goto(0, 0).yellow().write(`Score: ${score}`);
-  ui.cursor.reset();
-}, FRAME);
+    enemies.forEach((enemy, i) => {
+      // move with speed
+      enemy.move();
+      enemy.draw();
 
+      if (enemy.dead) {
+        enemies.splice(i, 1);
+      }
+
+      if (enemy.killed == 3) enemy.dead = true;
+      if (enemy.killed < 3) enemy.killed++;
+    })
+
+    ui.cursor.goto(0, 0).yellow().write(`${i18n.t('spacecraft.score')}: ${score}`);
+    ui.cursor.reset();
+  }, FRAME, i18n);
+}
 
 ui.onKey('right', () => {
   player.move(1, 0);

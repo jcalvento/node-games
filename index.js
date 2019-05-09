@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 var game = process.argv[2];
+var language = process.argv[3];
 
 if (!game) {
   console.log('usage: node-games <game>');
@@ -14,4 +15,6 @@ if (!game) {
 
 require('babel-polyfill');
 
-require(__dirname + '/build/' + game);
+const gameToPlay = require(__dirname + '/build/' + game).default;
+gameToPlay(language);
+

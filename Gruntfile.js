@@ -10,6 +10,14 @@ module.exports = function(grunt) {
         }]
       }
     },
+    copy: {
+      main: {
+        expand: true,
+        cwd: 'src',
+        src: 'locales/*',
+        dest: 'build'
+      }
+    },
     watch: {
       scripts: {
         files: ['src/**/*.js'],
@@ -20,6 +28,7 @@ module.exports = function(grunt) {
 
   grunt.loadNpmTasks('grunt-babel');
   grunt.loadNpmTasks('grunt-contrib-watch');
+  grunt.loadNpmTasks('grunt-contrib-copy');
 
   grunt.registerTask('default', ['babel']);
 };

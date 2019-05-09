@@ -1,0 +1,16 @@
+{
+  "snake": {
+    "score": "Puntaje",
+    "gameOver": "¡Se acabó el juego!",
+    "anyKey": "Presioná cualquier tecla para jugar nuevamente"
+  },
+  "tanks": {
+    "playerWon": "¡Ha ganado el jugador %{name}!",
+    "player": "Jugador %{number}",
+    "health": "Salud %{value}",
+    "angle": "Ángulo %{value}"
+  },
+  "spacecraft": {
+    "score": "Puntaje"
+  }
+}

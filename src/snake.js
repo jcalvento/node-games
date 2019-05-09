@@ -1,5 +1,6 @@
 import Unit from './classes/unit';
 import Interface from './classes/interface';
+import Polyglot from "node-polyglot";
 
 let FRAME = 100;
 let ui = new Interface();
@@ -23,7 +24,7 @@ point.random();
 let score = 0;
 
 let stop = false;
-function loop() {
+function loop(polyglot) {
   if (stop) return;
   ui.clear();
 
@@ -46,16 +47,14 @@ function loop() {
   }
 
   if (head.collides(snake.slice(2))) {
-    gameover();
+    gameover(i18n);
   }
 
-  ui.cursor.goto(0, 0).yellow().write(`Score: ${score}`);
+  ui.cursor.goto(0, 0).yellow().write(`${i18n.t('snake.score')}: ${score}`);
   ui.cursor.reset();
 
-  setTimeout(loop, FRAME);
+  setTimeout(loop, FRAME, i18n);
 }
-
-loop();
 
 ui.onKey('right', () => {
   changeDirection(RIGHT);
@@ -146,8 +145,8 @@ function createPart() {
   return part;
 }
 
-function gameover() {
-  const MSG = 'Game Over!';
+function gameover(i18n) {
+  const MSG = i18n.t('snake.gameOver');
   ui.cursor.goto(ui.center.x - MSG.length / 2, ui.center.y);
   ui.cursor.red();
   ui.cursor.bold();
@@ -155,7 +154,7 @@ function gameover() {
 
   ui.cursor.reset();
   ui.cursor.hex('#f65590');
-  const RETRY = 'Press any key to play again';
+  const RETRY = i18n.t('snake.anyKey');
   ui.cursor.goto(ui.center.x - RETRY.length / 2, ui.center.y + 2);
   ui.write(RETRY);
 
@@ -168,3 +167,11 @@ process.on('exit', function() {
   ui.cursor.horizontalAbsolute(0).eraseLine()
   ui.cursor.show();
 });
+
+export default function(language) {
+  const locale = require(`${__dirname}/locales/${language || 'en'}.json`);
+
+  const i18n = new Polyglot({phrases: locale});
+
+  loop(i18n);
+}
