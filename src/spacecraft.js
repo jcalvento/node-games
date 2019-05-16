@@ -1,6 +1,5 @@
 import Unit from './classes/unit';
 import Interface from './classes/interface';
-import Polyglot from "node-polyglot";
 
 const FRAME = 20;
 let ENEMY_SPAWN_RATE = 1000;
@@ -22,11 +21,7 @@ let missles = [];
 let enemies = [];
 let score = 0;
 
-export default function(language) {
-  const locale = require(`${__dirname}/locales/${language || 'en'}.json`);
-
-  const i18n = new Polyglot({phrases: locale});
-
+export default function(i18n) {
   setInterval((i18n) => {
     ui.clear();
 
@@ -62,9 +57,9 @@ export default function(language) {
         enemies.splice(i, 1);
       }
 
-      if (enemy.killed == 3) enemy.dead = true;
+      if (enemy.killed === 3) enemy.dead = true;
       if (enemy.killed < 3) enemy.killed++;
-    })
+    });
 
     ui.cursor.goto(0, 0).yellow().write(`${i18n.t('spacecraft.score')}: ${score}`);
     ui.cursor.reset();
@@ -110,7 +105,7 @@ ui.onKey('space', () => {
 
   enemy.speed = () => {
     return [Math.random() > 0.9 ? 0.4 : 0, 0.06];
-  }
+  };
 
   enemies.push(enemy);
 
@@ -118,6 +113,6 @@ ui.onKey('space', () => {
 }());
 
 process.on('exit', function() {
-  ui.cursor.horizontalAbsolute(0).eraseLine()
+  ui.cursor.horizontalAbsolute(0).eraseLine();
   ui.cursor.show();
 });

@@ -1,7 +1,5 @@
-import Unit from './classes/unit';
 import Tank from './classes/tank';
 import Interface from './classes/interface';
-import Polyglot from "node-polyglot";
 
 let FRAME = 50;
 let ui = new Interface();
@@ -90,13 +88,13 @@ ui.onKey('down', () => {
   if (immoblize) return;
 
   turn().angle -= 1;
-})
+});
 
 ui.onKey('up', () => {
   if (immoblize) return;
 
   turn().angle += 1;
-})
+});
 
 ui.onKey('left', () => {
   if (immoblize) return;
@@ -134,7 +132,7 @@ ui.onKey(() => {
 
     loop();
   }
-})
+});
 
 let TURN = true;
 function turn() {
@@ -142,10 +140,6 @@ function turn() {
   return two;
 }
 
-export default function(language) {
-  const locale = require(`${__dirname}/locales/${language || 'en'}.json`);
-
-  const i18n = new Polyglot({phrases: locale});
-
+export default function(i18n) {
   loop(i18n);
 }

@@ -1,6 +1,5 @@
 import Unit from './classes/unit';
 import Interface from './classes/interface';
-import Polyglot from "node-polyglot";
 
 let FRAME = 100;
 let ui = new Interface();
@@ -24,7 +23,7 @@ point.random();
 let score = 0;
 
 let stop = false;
-function loop(polyglot) {
+function loop(i18n) {
   if (stop) return;
   ui.clear();
 
@@ -68,23 +67,6 @@ ui.onKey('up', () => {
 ui.onKey('left', () => {
   changeDirection(LEFT);
 });
-
-ui.onKey(() => {
-  if (!stop) return;
-
-  stop = false;
-  snake = [];
-  head = createPart();
-  head.color = '#71da29';
-  createPart();
-  createPart();
-
-  score = 0;
-
-  point.random();
-
-  loop();
-})
 
 function changeDirection(dir) {
   if (head.direction === UP && dir === DOWN ||
@@ -130,7 +112,7 @@ function createPart() {
             direction == DOWN ? 1 : 0;
 
     return [x * multiplier, y * multiplier];
-  }
+  };
 
   let [dX, dY] = part.speed();
   dX *= -1;
@@ -168,10 +150,23 @@ process.on('exit', function() {
   ui.cursor.show();
 });
 
-export default function(language) {
-  const locale = require(`${__dirname}/locales/${language || 'en'}.json`);
-
-  const i18n = new Polyglot({phrases: locale});
-
+export default function(i18n) {
   loop(i18n);
+
+  ui.onKey(() => {
+    if (!stop) return;
+
+    stop = false;
+    snake = [];
+    head = createPart();
+    head.color = '#71da29';
+    createPart();
+    createPart();
+
+    score = 0;
+
+    point.random();
+
+    loop(i18n);
+  });
 }

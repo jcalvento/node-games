@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
-var game = process.argv[2];
-var language = process.argv[3];
+const game = process.argv[2];
+let language = process.argv[3];
 
 if (!game) {
   console.log('usage: node-games <game>');
@@ -16,5 +16,11 @@ if (!game) {
 require('babel-polyfill');
 
 const gameToPlay = require(__dirname + '/build/' + game).default;
-gameToPlay(language);
+const validLanguages = ['en', 'es'];
+language = validLanguages.find(function(languagePrefix) { return languagePrefix === language });
+const locale = require(`${__dirname}/locales/${language || 'en'}.json`);
+const Polyglot = require('node-polyglot');
+const i18n = new Polyglot({phrases: locale});
+
+gameToPlay(i18n);
 
