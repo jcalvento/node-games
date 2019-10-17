@@ -23,7 +23,7 @@ point.random();
 let score = 0;
 
 let stop = false;
-function loop() {
+function loop(i18n) {
   if (stop) return;
   ui.clear();
 
@@ -46,16 +46,14 @@ function loop() {
   }
 
   if (head.collides(snake.slice(2))) {
-    gameover();
+    gameover(i18n);
   }
 
-  ui.cursor.goto(0, 0).yellow().write(`Score: ${score}`);
+  ui.cursor.goto(0, 0).yellow().write(`${i18n.t('snake.score')}: ${score}`);
   ui.cursor.reset();
 
-  setTimeout(loop, FRAME);
+  setTimeout(loop, FRAME, i18n);
 }
-
-loop();
 
 ui.onKey('right', () => {
   changeDirection(RIGHT);
@@ -69,23 +67,6 @@ ui.onKey('up', () => {
 ui.onKey('left', () => {
   changeDirection(LEFT);
 });
-
-ui.onKey(() => {
-  if (!stop) return;
-
-  stop = false;
-  snake = [];
-  head = createPart();
-  head.color = '#71da29';
-  createPart();
-  createPart();
-
-  score = 0;
-
-  point.random();
-
-  loop();
-})
 
 function changeDirection(dir) {
   if (head.direction === UP && dir === DOWN ||
@@ -131,7 +112,7 @@ function createPart() {
             direction == DOWN ? 1 : 0;
 
     return [x * multiplier, y * multiplier];
-  }
+  };
 
   let [dX, dY] = part.speed();
   dX *= -1;
@@ -146,8 +127,8 @@ function createPart() {
   return part;
 }
 
-function gameover() {
-  const MSG = 'Game Over!';
+function gameover(i18n) {
+  const MSG = i18n.t('snake.gameOver');
   ui.cursor.goto(ui.center.x - MSG.length / 2, ui.center.y);
   ui.cursor.red();
   ui.cursor.bold();
@@ -155,7 +136,7 @@ function gameover() {
 
   ui.cursor.reset();
   ui.cursor.hex('#f65590');
-  const RETRY = 'Press any key to play again';
+  const RETRY = i18n.t('snake.anyKey');
   ui.cursor.goto(ui.center.x - RETRY.length / 2, ui.center.y + 2);
   ui.write(RETRY);
 
@@ -168,3 +149,24 @@ process.on('exit', function() {
   ui.cursor.horizontalAbsolute(0).eraseLine()
   ui.cursor.show();
 });
+
+export default function(i18n) {
+  loop(i18n);
+
+  ui.onKey(() => {
+    if (!stop) return;
+
+    stop = false;
+    snake = [];
+    head = createPart();
+    head.color = '#71da29';
+    createPart();
+    createPart();
+
+    score = 0;
+
+    point.random();
+
+    loop(i18n);
+  });
+}

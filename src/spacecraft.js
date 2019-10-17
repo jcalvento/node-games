@@ -20,49 +20,51 @@ explosion.dead = true;
 let missles = [];
 let enemies = [];
 let score = 0;
-setInterval(() => {
-  ui.clear();
 
-  player.draw();
+export default function(i18n) {
+  setInterval((i18n) => {
+    ui.clear();
 
-  missles.forEach((missle, i) => {
-    missle.move(1, 0);
-    missle.draw();
+    player.draw();
 
-    let enemy = missle.collides(enemies)
-    if (enemy) {
-      enemy.killed = 1;
-      enemy.color = 'red';
-      enemy.shape = '*';
-      missle.dead = true;
+    missles.forEach((missle, i) => {
+      missle.move(1, 0);
+      missle.draw();
 
-      ENEMY_SPAWN_RATE -= 5;
+      let enemy = missle.collides(enemies);
+      if (enemy) {
+        enemy.killed = 1;
+        enemy.color = 'red';
+        enemy.shape = '*';
+        missle.dead = true;
 
-      score++;
-    }
+        ENEMY_SPAWN_RATE -= 5;
 
-    if (missle.dead) {
-      missles.splice(i, 1);
-    }
-  });
+        score++;
+      }
 
-  enemies.forEach((enemy, i) => {
-    // move with speed
-    enemy.move();
-    enemy.draw();
+      if (missle.dead) {
+        missles.splice(i, 1);
+      }
+    });
 
-    if (enemy.dead) {
-      enemies.splice(i, 1);
-    }
+    enemies.forEach((enemy, i) => {
+      // move with speed
+      enemy.move();
+      enemy.draw();
 
-    if (enemy.killed == 3) enemy.dead = true;
-    if (enemy.killed < 3) enemy.killed++;
-  })
+      if (enemy.dead) {
+        enemies.splice(i, 1);
+      }
 
-  ui.cursor.goto(0, 0).yellow().write(`Score: ${score}`);
-  ui.cursor.reset();
-}, FRAME);
+      if (enemy.killed === 3) enemy.dead = true;
+      if (enemy.killed < 3) enemy.killed++;
+    });
 
+    ui.cursor.goto(0, 0).yellow().write(`${i18n.t('spacecraft.score')}: ${score}`);
+    ui.cursor.reset();
+  }, FRAME, i18n);
+}
 
 ui.onKey('right', () => {
   player.move(1, 0);
@@ -103,7 +105,7 @@ ui.onKey('space', () => {
 
   enemy.speed = () => {
     return [Math.random() > 0.9 ? 0.4 : 0, 0.06];
-  }
+  };
 
   enemies.push(enemy);
 
@@ -111,6 +113,6 @@ ui.onKey('space', () => {
 }());
 
 process.on('exit', function() {
-  ui.cursor.horizontalAbsolute(0).eraseLine()
+  ui.cursor.horizontalAbsolute(0).eraseLine();
   ui.cursor.show();
 });

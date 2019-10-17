@@ -1,5 +1,54 @@
 'use strict';
 
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+exports.default = function (i18n) {
+  setInterval(function (i18n) {
+    ui.clear();
+
+    player.draw();
+
+    missles.forEach(function (missle, i) {
+      missle.move(1, 0);
+      missle.draw();
+
+      var enemy = missle.collides(enemies);
+      if (enemy) {
+        enemy.killed = 1;
+        enemy.color = 'red';
+        enemy.shape = '*';
+        missle.dead = true;
+
+        ENEMY_SPAWN_RATE -= 5;
+
+        score++;
+      }
+
+      if (missle.dead) {
+        missles.splice(i, 1);
+      }
+    });
+
+    enemies.forEach(function (enemy, i) {
+      // move with speed
+      enemy.move();
+      enemy.draw();
+
+      if (enemy.dead) {
+        enemies.splice(i, 1);
+      }
+
+      if (enemy.killed === 3) enemy.dead = true;
+      if (enemy.killed < 3) enemy.killed++;
+    });
+
+    ui.cursor.goto(0, 0).yellow().write(i18n.t('spacecraft.score') + ': ' + score);
+    ui.cursor.reset();
+  }, FRAME, i18n);
+};
+
 var _unit = require('./classes/unit');
 
 var _unit2 = _interopRequireDefault(_unit);
@@ -29,48 +78,6 @@ explosion.dead = true;
 var missles = [];
 var enemies = [];
 var score = 0;
-setInterval(function () {
-  ui.clear();
-
-  player.draw();
-
-  missles.forEach(function (missle, i) {
-    missle.move(1, 0);
-    missle.draw();
-
-    var enemy = missle.collides(enemies);
-    if (enemy) {
-      enemy.killed = 1;
-      enemy.color = 'red';
-      enemy.shape = '*';
-      missle.dead = true;
-
-      ENEMY_SPAWN_RATE -= 5;
-
-      score++;
-    }
-
-    if (missle.dead) {
-      missles.splice(i, 1);
-    }
-  });
-
-  enemies.forEach(function (enemy, i) {
-    // move with speed
-    enemy.move();
-    enemy.draw();
-
-    if (enemy.dead) {
-      enemies.splice(i, 1);
-    }
-
-    if (enemy.killed == 3) enemy.dead = true;
-    if (enemy.killed < 3) enemy.killed++;
-  });
-
-  ui.cursor.goto(0, 0).yellow().write('Score: ' + score);
-  ui.cursor.reset();
-}, FRAME);
 
 ui.onKey('right', function () {
   player.move(1, 0);

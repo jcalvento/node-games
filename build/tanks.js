@@ -1,8 +1,12 @@
 'use strict';
 
-var _unit = require('./classes/unit');
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
 
-var _unit2 = _interopRequireDefault(_unit);
+exports.default = function (i18n) {
+  loop(i18n);
+};
 
 var _tank = require('./classes/tank');
 
@@ -26,14 +30,14 @@ two.go(ui.columns - 10, ui.rows);
 
 var stop = false;
 
-function loop() {
+function loop(i18n) {
   if (stop) return;
 
   ui.clear();
 
   if (one.dead || two.dead) {
     var num = one.dead ? '2' : '1';
-    var msg = 'Player ' + num + ' won!';
+    var msg = i18n.t('tanks.playerWon', { num: num });
     ui.cursor.red();
     ui.cursor.bold();
 
@@ -62,12 +66,12 @@ function loop() {
 
   ui.cursor.goto(0, 1);
   if (turn() === one) ui.cursor.hex('#54ffff');
-  ui.write('Player 1');
+  ui.write(i18n.t('tanks.player', { number: "1" }));
   ui.cursor.reset();
   ui.cursor.goto(0, 2);
-  ui.write('Health: ' + one.health);
+  ui.write(i18n.t('tanks.health', { value: one.health }));
   ui.cursor.goto(0, 3);
-  ui.write('Angle: ' + parseInt(one.angle));
+  ui.write(i18n.t('tanks.angle', { value: parseInt(one.angle) }));
 
   two.draw();
   two.bullets.forEach(function (bullet, i) {
@@ -87,17 +91,15 @@ function loop() {
 
   ui.cursor.goto(ui.output.columns - 10, 1);
   if (turn() === two) ui.cursor.hex('#54ffff');
-  ui.write('Player 2');
+  ui.write(i18n.t('tanks.player', { number: "2" }));
   ui.cursor.reset();
   ui.cursor.goto(ui.output.columns - 10, 2);
-  ui.write('Health: ' + two.health);
+  ui.write(i18n.t('tanks.health', { value: two.health }));
   ui.cursor.goto(ui.output.columns - 10, 3);
-  ui.write('Angle: ' + parseInt(two.angle));
+  ui.write(i18n.t('tanks.angle', { value: parseInt(two.angle) }));
 
-  setTimeout(loop, FRAME);
+  setTimeout(loop, FRAME, i18n);
 }
-
-loop();
 
 ui.onKey('down', function () {
   if (immoblize) return;

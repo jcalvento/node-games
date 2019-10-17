@@ -1,4 +1,3 @@
-import Unit from './classes/unit';
 import Tank from './classes/tank';
 import Interface from './classes/interface';
 
@@ -14,14 +13,14 @@ two.go(ui.columns - 10, ui.rows);
 
 let stop = false;
 
-function loop() {
+function loop(i18n) {
   if (stop) return;
 
   ui.clear();
 
   if (one.dead || two.dead) {
     let num = one.dead ? '2' : '1';
-    const msg = `Player ${num} won!`;
+    const msg = i18n.t('tanks.playerWon', {num: num});
     ui.cursor.red();
     ui.cursor.bold();
 
@@ -50,12 +49,12 @@ function loop() {
 
   ui.cursor.goto(0, 1);
   if (turn() === one) ui.cursor.hex('#54ffff');
-  ui.write('Player 1');
+  ui.write(i18n.t('tanks.player', {number: "1"}));
   ui.cursor.reset();
   ui.cursor.goto(0, 2);
-  ui.write('Health: ' + one.health);
+  ui.write(i18n.t('tanks.health', {value: one.health}));
   ui.cursor.goto(0, 3);
-  ui.write('Angle: ' + parseInt(one.angle));
+  ui.write(i18n.t('tanks.angle', {value: parseInt(one.angle)}));
 
   two.draw();
   two.bullets.forEach((bullet, i) => {
@@ -75,29 +74,27 @@ function loop() {
 
   ui.cursor.goto(ui.output.columns - 10, 1);
   if (turn() === two) ui.cursor.hex('#54ffff');
-  ui.write('Player 2');
+  ui.write(i18n.t('tanks.player', {number: "2"}));
   ui.cursor.reset();
   ui.cursor.goto(ui.output.columns - 10, 2);
-  ui.write('Health: ' + two.health);
+  ui.write(i18n.t('tanks.health', {value: two.health}));
   ui.cursor.goto(ui.output.columns - 10, 3);
-  ui.write('Angle: ' + parseInt(two.angle));
+  ui.write(i18n.t('tanks.angle', {value: parseInt(two.angle)}));
 
-  setTimeout(loop, FRAME);
+  setTimeout(loop, FRAME, i18n);
 }
-
-loop();
 
 ui.onKey('down', () => {
   if (immoblize) return;
 
   turn().angle -= 1;
-})
+});
 
 ui.onKey('up', () => {
   if (immoblize) return;
 
   turn().angle += 1;
-})
+});
 
 ui.onKey('left', () => {
   if (immoblize) return;
@@ -135,10 +132,14 @@ ui.onKey(() => {
 
     loop();
   }
-})
+});
 
 let TURN = true;
 function turn() {
   if (TURN) return one;
   return two;
+}
+
+export default function(i18n) {
+  loop(i18n);
 }

@@ -1,6 +1,31 @@
 'use strict';
 
-var _slicedToArray = (function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; })();
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+
+exports.default = function (i18n) {
+  loop(i18n);
+
+  ui.onKey(function () {
+    if (!stop) return;
+
+    stop = false;
+    snake = [];
+    head = createPart();
+    head.color = '#71da29';
+    createPart();
+    createPart();
+
+    score = 0;
+
+    point.random();
+
+    loop(i18n);
+  });
+};
 
 var _unit = require('./classes/unit');
 
@@ -34,7 +59,7 @@ point.random();
 var score = 0;
 
 var stop = false;
-function loop() {
+function loop(i18n) {
   if (stop) return;
   ui.clear();
 
@@ -57,16 +82,14 @@ function loop() {
   }
 
   if (head.collides(snake.slice(2))) {
-    gameover();
+    gameover(i18n);
   }
 
-  ui.cursor.goto(0, 0).yellow().write('Score: ' + score);
+  ui.cursor.goto(0, 0).yellow().write(i18n.t('snake.score') + ': ' + score);
   ui.cursor.reset();
 
-  setTimeout(loop, FRAME);
+  setTimeout(loop, FRAME, i18n);
 }
-
-loop();
 
 ui.onKey('right', function () {
   changeDirection(RIGHT);
@@ -81,23 +104,6 @@ ui.onKey('left', function () {
   changeDirection(LEFT);
 });
 
-ui.onKey(function () {
-  if (!stop) return;
-
-  stop = false;
-  snake = [];
-  head = createPart();
-  head.color = '#71da29';
-  createPart();
-  createPart();
-
-  score = 0;
-
-  point.random();
-
-  loop();
-});
-
 function changeDirection(dir) {
   if (head.direction === UP && dir === DOWN || head.direction === DOWN && dir === UP || head.direction === LEFT && dir === RIGHT || head.direction === RIGHT && dir === LEFT) return;
   head.direction = dir;
@@ -107,7 +113,7 @@ function createPart() {
   var part = new _unit2.default(ui);
   var last = snake[snake.length - 1];
 
-  var direction = undefined;
+  var direction = void 0;
   if (!last) {
     direction = UP;
   } else {
@@ -132,21 +138,19 @@ function createPart() {
   };
 
   part.speed = function () {
-    var multiplier = arguments.length <= 0 || arguments[0] === undefined ? 1 : arguments[0];
+    var multiplier = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
     var direction = part.direction;
 
-    var x = direction == LEFT ? -1 : direction == RIGHT ? 1 : 0;
-    var y = direction == UP ? -1 : direction == DOWN ? 1 : 0;
+    var x = direction === LEFT ? -1 : direction === RIGHT ? 1 : 0;
+    var y = direction === UP ? -1 : direction === DOWN ? 1 : 0;
 
     return [x * multiplier, y * multiplier];
   };
 
-  var _part$speed = part.speed();
-
-  var _part$speed2 = _slicedToArray(_part$speed, 2);
-
-  var dX = _part$speed2[0];
-  var dY = _part$speed2[1];
+  var _part$speed = part.speed(),
+      _part$speed2 = _slicedToArray(_part$speed, 2),
+      dX = _part$speed2[0],
+      dY = _part$speed2[1];
 
   dX *= -1;
   dY *= -1;
@@ -160,8 +164,8 @@ function createPart() {
   return part;
 }
 
-function gameover() {
-  var MSG = 'Game Over!';
+function gameover(i18n) {
+  var MSG = i18n.t('snake.gameOver');
   ui.cursor.goto(ui.center.x - MSG.length / 2, ui.center.y);
   ui.cursor.red();
   ui.cursor.bold();
@@ -169,7 +173,7 @@ function gameover() {
 
   ui.cursor.reset();
   ui.cursor.hex('#f65590');
-  var RETRY = 'Press any key to play again';
+  var RETRY = i18n.t('snake.anyKey');
   ui.cursor.goto(ui.center.x - RETRY.length / 2, ui.center.y + 2);
   ui.write(RETRY);
 

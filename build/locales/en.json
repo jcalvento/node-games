@@ -1,0 +1,17 @@
+{
+  "snake": {
+    "score": "Score",
+    "gameOver": "Game Over!",
+    "anyKey": "Press any key to play again"
+  },
+  "tanks": {
+    "playerWon": "Player %{num} won!",
+    "player": "Player %{number}",
+    "health": "Health %{value}",
+    "angle": "Angle %{value}"
+  },
+  "spacecraft": {
+    "score": "Score"
+  }
+}
+
